@@ -8,33 +8,52 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
-import { ILoginFormInput } from "../auth.interface";
+import type { ILoginFormInput } from "../auth.interface";
 
 import { LoginFormSchema } from "../schemas/loginFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import {
-  Eye,
-  EyeClosed,
-  EyeClosedIcon,
-  EyeOff,
-  EyeOffIcon,
-} from "lucide-react";
+import { Eye, EyeOffIcon } from "lucide-react";
+import { useLogin } from "../hooks/auth.hook";
+
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { FetchError } from "ofetch";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<ILoginFormInput>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      email: "admin@gmail.com",
-      password: "Rabi@5350",
+      email: "admin1@gmail.com",
+      password: "Admin@123",
     },
   });
 
+  const { mutate: login, isPending } = useLogin();
+  const router = useRouter();
+
   const onSubmit = (values: ILoginFormInput) => {
-    console.log(values);
+    const loginData = {
+      email: values.email,
+      password: values.password,
+    };
+
+    login(loginData, {
+      onSuccess: (res) => {
+        toast.success(res.message, {
+          description: "Welcome back to doctovia",
+        });
+        router.replace("/");
+      },
+      onError: (error) => {
+        showErrorToast(error);
+      },
+    });
   };
+
   return (
     <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
