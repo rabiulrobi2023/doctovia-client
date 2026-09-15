@@ -20,7 +20,8 @@ import { useLogin } from "../hooks/auth.hook";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FetchError } from "ofetch";
-import { showErrorToast } from "@/utils/showErrorToast";
+import { showErrorToast, showSuccessTost } from "@/utils/showToast";
+import { BitRateSpinner, SpacedSpinner, Spinner } from "@/components/ui/spinner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,13 +44,11 @@ const LoginForm = () => {
 
     login(loginData, {
       onSuccess: (res) => {
-        toast.success(res.message, {
-          description: "Welcome back to doctovia",
-        });
+        showSuccessTost(res.message || "Login successful");
         router.replace("/");
       },
       onError: (error) => {
-        showErrorToast(error);
+        showErrorToast(error, null);
       },
     });
   };
@@ -112,10 +111,17 @@ const LoginForm = () => {
             </Field>
           )}
         />
-        <Button className="w-full" type="submit" id="login-form">
-          {" "}
-          Login
-        </Button>
+        {!isPending ? (
+          <Button className="w-full" type="submit" id="login-form">
+            {" "}
+            Login
+          </Button>
+        ) : (
+          <Button className="w-full" type="submit" id="login-form" disabled>
+            {" "}
+            Logging... <SpacedSpinner/>
+          </Button>
+        )}
       </FieldGroup>
     </form>
   );

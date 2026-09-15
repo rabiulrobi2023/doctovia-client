@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import Providers from "@/providers";
 import { Toaster } from "sonner";
 
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
@@ -36,12 +35,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         inter.variable,
       )}
     >
-      <Providers>
-        <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col">
+        <Providers>
           {children}
-         <Toaster richColors duration={3000} position="top-right"/>
-        </body>
-      </Providers> 
+          <Toaster richColors duration={3000} position="top-right" />
+        </Providers>
+      </body>
     </html>
   );
 }

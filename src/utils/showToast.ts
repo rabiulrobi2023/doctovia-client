@@ -6,11 +6,11 @@ const getErrorMessage = (
   fallBack = "Something went wrong",
 ): string => {
   if (error instanceof FetchError) {
-    const data = error.data;
-    return data.message || fallBack;
+    const data = error?.data;
+    return data?.message || fallBack;
   }
   if (error instanceof Error) {
-    return error.message;
+    return error?.message;
   }
   return fallBack;
 };
@@ -22,4 +22,11 @@ export const showErrorToast = (
   return toast.error(title ?? "", {
     description: getErrorMessage(error),
   });
+};
+
+export const showSuccessTost = (
+  message: string,
+  title: string | null = "Success",
+) => {
+  return toast.success(title ?? "", { description: message });
 };
