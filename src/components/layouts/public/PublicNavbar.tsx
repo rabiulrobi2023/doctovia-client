@@ -26,7 +26,6 @@ const PublicNavbar = () => {
       },
     });
   };
-  console.log(user);
 
   return (
     <header className="h-16 border-b">

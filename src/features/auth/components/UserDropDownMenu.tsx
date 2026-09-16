@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const UserDropdownMenu = ({
   user,
@@ -45,7 +46,20 @@ const UserDropdownMenu = ({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button className="rounded-full w-10 h-10 text-xl">{initial}</Button>
+          <Button className="rounded-full w-10 h-10 p-0">
+            {user.imageUrl ? (
+              <Image
+                unoptimized
+                src={user.imageUrl}
+                height={96}
+                width={96}
+                alt="profile"
+                className="rounded-full"
+              />
+            ) : (
+              <span className="text-xl">{initial}</span>
+            )}
+          </Button>
         }
       />
 
@@ -64,7 +78,7 @@ const UserDropdownMenu = ({
         <DropdownMenuGroup>
           <DropdownMenuItem render={<Link href={dashboardHref} />}>
             {userMenuItems.map((userMenu) => (
-              <DropdownMenuItem>
+              <DropdownMenuItem key={userMenu.href}>
                 <userMenu.icon />
                 <Link key={userMenu.href} href={userMenu.href}>
                   {userMenu.label}

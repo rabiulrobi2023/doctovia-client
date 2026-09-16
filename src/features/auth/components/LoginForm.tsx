@@ -5,23 +5,21 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
 import type { ILoginFormInput } from "../auth.interface";
-
 import { LoginFormSchema } from "../schemas/loginFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Eye, EyeOffIcon } from "lucide-react";
-import { useLogin } from "../hooks/auth.hook";
-
+import { useGoogleLogin, useLogin } from "../hooks/auth.hook";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { FetchError } from "ofetch";
 import { showErrorToast, showSuccessTost } from "@/utils/showToast";
-import { BitRateSpinner, SpacedSpinner, Spinner } from "@/components/ui/spinner";
+import { SpacedSpinner } from "@/components/ui/spinner";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -51,6 +49,28 @@ const LoginForm = () => {
         showErrorToast(error, null);
       },
     });
+  };
+
+  const { mutate: googleLogin } = useGoogleLogin();
+
+  const handleGoogleOnSuccess = (idToken?: string) => {
+    if (!idToken) {
+      showErrorToast("Google token not found");
+      return;
+    }
+    googleLogin(idToken, {
+      onSuccess: (res) => {
+        showSuccessTost(res.message || "Login successfully", null);
+        router.push("/");
+      },
+      onError: (err) => {
+        showErrorToast(err.message, null);
+      },
+    });
+  };
+
+  const handleGoogleError = () => {
+    showErrorToast("Google login fail", null);
   };
 
   return (
@@ -119,9 +139,15 @@ const LoginForm = () => {
         ) : (
           <Button className="w-full" type="submit" id="login-form" disabled>
             {" "}
-            Logging... <SpacedSpinner/>
+            Logging... <SpacedSpinner />
           </Button>
         )}
+        <FieldSeparator>Or</FieldSeparator>
+        <GoogleLogin
+          size="medium"
+          onSuccess={(res) => handleGoogleOnSuccess(res.credential)}
+          onError={() => handleGoogleError()}
+        />
       </FieldGroup>
     </form>
   );
